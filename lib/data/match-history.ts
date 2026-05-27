@@ -1,6 +1,7 @@
 import type { BotPersonality, CheckerMove, MatchMode, PlayerColor } from "@/lib/types";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { useAuthStore } from "@/store/auth-store";
+import { useProfileStore } from "@/store/profile-store";
 
 const STORAGE_KEY = "backgammon-rush-match-history";
 
@@ -9,6 +10,8 @@ export interface MatchHistoryEntry {
   userId?: string | null;
   matchId: string;
   opponentType: "bot" | "local" | "friend";
+  opponentId?: string | null;
+  opponentName?: string | null;
   result: "win" | "loss";
   score: string;
   moves: number;
@@ -22,6 +25,8 @@ export interface MatchHistoryEntry {
   endedEarly?: boolean;
   forfeitBy?: PlayerColor | null;
   ratingDelta?: number;
+  whitePlayerName?: string | null;
+  blackPlayerName?: string | null;
 }
 
 export interface RecordedMove {
@@ -35,7 +40,22 @@ export interface RecordedMove {
 export function saveMatchToHistory(entry: MatchHistoryEntry, moves: RecordedMove[] = []) {
   const supabase = createSupabaseBrowserClient();
   const currentUser = useAuthStore.getState().user;
-  const withUser = { ...entry, userId: currentUser?.id ?? entry.userId ?? null };
+  const currentProfile = useProfileStore.getState().profile;
+  const selfName = currentProfile?.username ?? currentUser?.displayName ?? "Player";
+  const opponentName =
+    entry.opponentName ??
+    (entry.opponentType === "bot"
+      ? `${entry.botPersonality ?? "Bot"} Bot`
+      : entry.opponentType === "local"
+        ? "Local Opponent"
+        : "Friend");
+  const withUser = {
+    ...entry,
+    userId: currentUser?.id ?? entry.userId ?? null,
+    opponentName,
+    whitePlayerName: entry.whitePlayerName ?? (entry.playerColor === "white" ? selfName : opponentName),
+    blackPlayerName: entry.blackPlayerName ?? (entry.playerColor === "black" ? selfName : opponentName)
+  };
 
   if (typeof window !== "undefined") {
     const existing = loadMatchHistory();
@@ -54,8 +74,8 @@ export function saveMatchToHistory(entry: MatchHistoryEntry, moves: RecordedMove
     .upsert({
       id: withUser.matchId,
       mode: withUser.matchMode,
-      player_white_id: withUser.playerColor === "white" ? currentUser.id : null,
-      player_black_id: withUser.playerColor === "black" ? currentUser.id : null,
+      player_white_id: withUser.playerColor === "white" ? currentUser.id : withUser.opponentId ?? null,
+      player_black_id: withUser.playerColor === "black" ? currentUser.id : withUser.opponentId ?? null,
       bot_personality: withUser.botPersonality ?? null,
       room_id: withUser.roomId ?? null,
       status: "finished",
@@ -118,7 +138,9 @@ export function createMatchHistoryEntry({
   aiCoachSummary,
   endedEarly = false,
   forfeitBy = null,
-  ratingDelta = 0
+  ratingDelta = 0,
+  opponentId = null,
+  opponentName = null
 }: {
   matchId: string;
   matchMode: MatchMode;
@@ -133,6 +155,8 @@ export function createMatchHistoryEntry({
   endedEarly?: boolean;
   forfeitBy?: PlayerColor | null;
   ratingDelta?: number;
+  opponentId?: string | null;
+  opponentName?: string | null;
 }): MatchHistoryEntry {
   const opponentType: "bot" | "local" | "friend" =
     matchMode === "bot" ? "bot" : matchMode === "friend" ? "friend" : "local";
@@ -143,6 +167,14 @@ export function createMatchHistoryEntry({
     userId: null,
     matchId,
     opponentType,
+    opponentId,
+    opponentName:
+      opponentName ??
+      (opponentType === "bot"
+        ? `${botPersonality ?? "Bot"} Bot`
+        : opponentType === "local"
+          ? "Local Opponent"
+          : "Friend"),
     result,
     score:
       endedEarly && result === "win"
@@ -174,4 +206,21 @@ export function createMatchHistoryEntry({
     forfeitBy,
     ratingDelta
   };
+}
+
+export function getMatchOpponentName(entry: MatchHistoryEntry) {
+  if (entry.opponentName) {
+    return entry.opponentName;
+  }
+  if (entry.opponentType === "bot") {
+    return `${entry.botPersonality ?? "Bot"} Bot`;
+  }
+  if (entry.opponentType === "local") {
+    return "Local Opponent";
+  }
+  return "Friend";
+}
+
+export function getMatchOpponentLabel(entry: MatchHistoryEntry) {
+  return `vs ${getMatchOpponentName(entry)}`;
 }

@@ -8,7 +8,7 @@ import { AuthMenu } from "@/components/auth-menu";
 import { Badge, Container, LinkButton, Panel } from "@/components/ui";
 import { useAuthStore } from "@/store/auth-store";
 import { useProfileStore } from "@/store/profile-store";
-import { loadMatchHistory, type MatchHistoryEntry } from "@/lib/data/match-history";
+import { getMatchOpponentLabel, loadMatchHistory, type MatchHistoryEntry } from "@/lib/data/match-history";
 import { formatTrialRemaining, getSubscriptionSnapshot } from "@/lib/data/subscription-client";
 import { getVibeRoomConfig } from "@/lib/vibe-rooms";
 import { leaderboardSeed, statsSeed } from "@/lib/mock-data";
@@ -23,14 +23,14 @@ const guestGames = [
 export default function DashboardPage() {
   const user = useAuthStore((state) => state.user);
   const hydrated = useAuthStore((state) => state.hydrated);
-  const { profile, loadProfile } = useProfileStore();
+  const { profile, loadProfile, syncProfileFromLocal } = useProfileStore();
   const [history, setHistory] = useState<MatchHistoryEntry[]>([]);
   const friendRoomHref = useMemo(() => "/game/setup?mode=friend" as Route, []);
   const subscription = useMemo(() => getSubscriptionSnapshot(profile), [profile]);
 
   useEffect(() => {
     if (user) {
-      void loadProfile(user.id, user.email, true);
+      void loadProfile(user.id, user.email);
     }
   }, [loadProfile, user]);
 
@@ -44,12 +44,16 @@ export default function DashboardPage() {
     const handleStorage = (event: StorageEvent) => {
       if (event.key === "backgammon-rush-match-history") {
         setHistory(loadMatchHistory());
+        return;
+      }
+      if (user && (event.key === `backgammon-rush-profile-${user.id}` || event.key === `backgammon-rush-subscription-${user.id}`)) {
+        syncProfileFromLocal(user.id, user.email);
       }
     };
 
     window.addEventListener("storage", handleStorage);
     return () => window.removeEventListener("storage", handleStorage);
-  }, [user]);
+  }, [syncProfileFromLocal, user]);
 
   const recentGames = useMemo(() => {
     if (!user) {
@@ -60,12 +64,7 @@ export default function DashboardPage() {
 
       return localHistory.slice(0, 5).map((entry) => ({
         result: entry.result === "win" ? "W" : "L",
-        name:
-          entry.opponentType === "bot"
-            ? `vs ${entry.botPersonality ?? "Bot"}`
-            : entry.opponentType === "friend"
-              ? "vs Friend"
-              : "vs Local",
+        name: getMatchOpponentLabel(entry),
         room: `${entry.vibeRoom}${entry.endedEarly ? " · Forfeit" : ""}`,
         time: new Date(entry.date).toLocaleDateString(undefined, { month: "short", day: "numeric" }),
         score: entry.score,
@@ -82,12 +81,7 @@ export default function DashboardPage() {
 
     return list.slice(0, 5).map((entry) => ({
       result: entry.result === "win" ? "W" : "L",
-      name:
-        entry.opponentType === "bot"
-          ? `vs ${entry.botPersonality ?? "Bot"}`
-          : entry.opponentType === "friend"
-            ? "vs Friend"
-            : "vs Local",
+      name: getMatchOpponentLabel(entry),
       room: `${entry.vibeRoom}${entry.endedEarly ? " · Forfeit" : ""}`,
       time: new Date(entry.date).toLocaleDateString(undefined, { month: "short", day: "numeric" }),
       score: entry.score,

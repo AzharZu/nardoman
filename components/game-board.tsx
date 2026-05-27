@@ -41,6 +41,7 @@ export function GameBoard({ boardOnly = false, vibeRoom }: { boardOnly?: boolean
   const reduceMotion = useReducedMotion();
   const game = useGameStore((state) => state.game);
   const matchMode = useGameStore((state) => state.matchMode);
+  const opponentName = useGameStore((state) => state.opponentName);
   const roll = useGameStore((state) => state.roll);
   const endCurrentTurn = useGameStore((state) => state.endCurrentTurn);
   const activeAnalysis = useActiveAnalysis();
@@ -569,6 +570,11 @@ export function GameBoard({ boardOnly = false, vibeRoom }: { boardOnly?: boolean
               <Badge className="border-[#d8ccb8] bg-[#f6f1e5] px-3 py-1.5 text-[0.7rem] uppercase tracking-[0.22em] text-[#39404f]">
                 {vibeConfig.badge}
               </Badge>
+              {matchMode === "friend" && opponentName ? (
+                <Badge className="border-[#cfe0ba] bg-[#eef6df] px-3 py-1.5 text-[0.7rem] uppercase tracking-[0.22em] text-[#5d8f49]">
+                  Playing with {opponentName}
+                </Badge>
+              ) : null}
               {!boardOnly ? (
                 <>
                   <Badge className="border-[#d8ccb8] bg-[#faf7ef] px-3 py-1.5 text-[0.7rem] uppercase tracking-[0.22em] text-[#5f665b]">
