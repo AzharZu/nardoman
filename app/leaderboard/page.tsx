@@ -21,29 +21,29 @@ export default async function LeaderboardPage({
   return (
     <div className="page-shell">
       <header className="top-nav">
-        <Container className="flex h-[82px] items-center justify-between">
-          <div className="flex items-center gap-8">
-            <Link href="/" className="inline-flex items-center gap-2 text-xl font-semibold text-[#2a3041]">
-              <ArrowLeft className="h-5 w-5" />
+        <Container className="flex h-[70px] items-center justify-between !max-w-[1180px] !px-5 sm:!px-6 lg:!px-8">
+          <div className="flex items-center gap-6">
+            <Link href="/" className="inline-flex items-center gap-2 text-base font-semibold text-[#2a3041]">
+              <ArrowLeft className="h-4 w-4" />
               Home
             </Link>
-            <h1 className="text-4xl font-semibold text-[#1f2639]">Leaderboard</h1>
+            <h1 className="text-3xl font-semibold text-[#1f2639]">Leaderboard</h1>
           </div>
-          <Link href="/game" className="rounded-2xl bg-[#6dae58] px-6 py-2.5 text-2xl font-semibold text-white">
+          <Link href="/game" className="whitespace-nowrap rounded-2xl bg-[#6dae58] px-4 py-1.5 text-sm font-semibold text-white">
             Play Now
           </Link>
         </Container>
       </header>
 
-      <Container className="py-8 lg:py-10">
-        <section className="hero-green rounded-[34px] py-10 text-center text-white">
-          <Trophy className="mx-auto h-16 w-16" />
-          <h2 className="mt-3 text-5xl font-semibold">Top Players Near You</h2>
-          <p className="mt-2 text-3xl text-white/90">Join the local community of backgammon enthusiasts</p>
+      <Container className="py-6 lg:py-8 !max-w-[1140px] !px-5 sm:!px-6 lg:!px-8">
+        <section className="hero-green rounded-[30px] py-9 text-center text-white">
+          <Trophy className="mx-auto h-12 w-12" />
+          <h2 className="mt-3 text-4xl font-semibold md:text-5xl">Top Players Near You</h2>
+          <p className="mt-2 text-lg text-white/90 md:text-xl">Join the local community of backgammon enthusiasts</p>
         </section>
 
-        <section className="soft-panel mt-7 p-4 sm:p-6">
-          <div className="mb-6 grid grid-cols-2 gap-2 rounded-[28px] bg-[#e8e4dc] p-2 text-center text-xl font-semibold text-[#2a3041] sm:grid-cols-4">
+        <section className="soft-panel mt-6 p-4 sm:p-5">
+          <div className="mb-5 grid grid-cols-2 gap-2 rounded-[24px] bg-[#e8e4dc] p-2 text-center text-sm font-semibold text-[#2a3041] sm:grid-cols-4 sm:text-base">
             <Tab href="/leaderboard" active={selectedCity === "all"}>
               All
             </Tab>
@@ -63,18 +63,18 @@ export default async function LeaderboardPage({
             {filtered.map((row, index) => (
               <article
                 key={row.userId}
-                className={`grid items-center gap-4 rounded-[24px] px-5 py-5 ${
+                className={`grid items-center gap-3 rounded-[24px] px-4 py-4 ${
                   index < 3 ? "border border-[#efd39b] bg-[#f8f5ec]" : "border border-transparent bg-transparent"
                 } md:grid-cols-[1.2fr_0.45fr_0.45fr_0.35fr]`}
               >
-                <div className="flex items-center gap-4">
-                  <div className="flex h-10 w-10 items-center justify-center text-[#e1b34f]">
-                    {index === 0 ? <Trophy className="h-8 w-8" /> : index === 1 ? <Medal className="h-8 w-8 text-[#a7c58d]" /> : index === 2 ? <Medal className="h-8 w-8 text-[#f4a881]" /> : <span className="text-4xl font-semibold text-[#707786]">{row.rank}</span>}
+                <div className="flex items-center gap-3">
+                  <div className="flex h-9 w-9 items-center justify-center text-[#e1b34f]">
+                    {index === 0 ? <Trophy className="h-7 w-7" /> : index === 1 ? <Medal className="h-7 w-7 text-[#a7c58d]" /> : index === 2 ? <Medal className="h-7 w-7 text-[#f4a881]" /> : <span className="text-2xl font-semibold text-[#707786]">{row.rank}</span>}
                   </div>
                   <div>
-                    <p className="text-4xl font-semibold text-[#202738] md:text-3xl">{row.displayName}</p>
-                    <p className="flex items-center gap-1 text-3xl text-[#707786] md:text-2xl">
-                      <MapPin className="h-4 w-4" />
+                    <p className="text-2xl font-semibold text-[#202738] md:text-[2rem]">{row.displayName}</p>
+                    <p className="flex items-center gap-1 text-lg text-[#707786] md:text-xl">
+                      <MapPin className="h-3.5 w-3.5" />
                       {row.city}
                     </p>
                   </div>
@@ -87,15 +87,15 @@ export default async function LeaderboardPage({
           </div>
         </section>
 
-        <section className="mt-8 flex items-center justify-between rounded-[24px] border border-[#afcda6] bg-[linear-gradient(90deg,#eaf4e5,#f3f5ec,#e4edd6)] px-6 py-5">
-          <div className="flex items-center gap-4">
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#6dae58] text-2xl font-semibold text-white">#247</div>
+        <section className="mt-7 flex items-center justify-between rounded-[24px] border border-[#afcda6] bg-[linear-gradient(90deg,#eaf4e5,#f3f5ec,#e4edd6)] px-5 py-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#6dae58] text-xl font-semibold text-white">#247</div>
             <div>
-              <p className="text-4xl font-semibold text-[#21293a] md:text-3xl">Your Rank</p>
-              <p className="text-3xl text-[#667080] md:text-2xl">Keep playing to climb higher!</p>
+              <p className="text-2xl font-semibold text-[#21293a] md:text-3xl">Your Rank</p>
+              <p className="text-lg text-[#667080] md:text-xl">Keep playing to climb higher!</p>
             </div>
           </div>
-          <Link href="/game" className="rounded-2xl bg-[#6dae58] px-8 py-3 text-3xl font-semibold text-white md:text-2xl">
+          <Link href="/game" className="rounded-2xl bg-[#6dae58] px-6 py-2.5 text-base font-semibold text-white">
             Play to Improve
           </Link>
         </section>
@@ -107,8 +107,8 @@ export default async function LeaderboardPage({
 function Stat({ value, label, tone }: { value: string; label: string; tone: string }) {
   return (
     <div className="text-right md:text-center">
-      <p className={`text-4xl font-semibold md:text-3xl ${tone}`}>{value}</p>
-      <p className="text-3xl text-[#707786] md:text-2xl">{label}</p>
+      <p className={`text-2xl font-semibold md:text-3xl ${tone}`}>{value}</p>
+      <p className="text-lg text-[#707786] md:text-xl">{label}</p>
     </div>
   );
 }
@@ -125,7 +125,7 @@ function Tab({
   return (
     <Link
       href={href}
-      className={`rounded-full px-4 py-2.5 transition ${
+      className={`rounded-full px-3.5 py-2 transition ${
         active ? "bg-[#f5f6f8] text-[#1f2639] shadow-sm" : "text-[#6f7480] hover:bg-[#f5f1e7] hover:text-[#1f2639]"
       }`}
     >
