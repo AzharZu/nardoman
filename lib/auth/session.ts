@@ -69,10 +69,15 @@ export async function bootstrapAuth(
 
   const { data } = await supabase.auth.getSession();
   const initialSession = await enrichSession(mapSupabaseSession(data.session));
-  onSession(initialSession);
+  if (initialSession) {
+    onSession(initialSession);
+  }
   onHydrated();
 
-  const { data: listener } = supabase.auth.onAuthStateChange(async (_event, session) => {
+  const { data: listener } = supabase.auth.onAuthStateChange(async (event, session) => {
+    if (event === "INITIAL_SESSION") {
+      return;
+    }
     const mapped = await enrichSession(mapSupabaseSession(session));
     onSession(mapped);
   });

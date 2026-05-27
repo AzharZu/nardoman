@@ -7,6 +7,7 @@ interface ProfileState {
   loading: boolean;
   error: string | null;
   loadProfile: (userId: string, email: string, force?: boolean) => Promise<void>;
+  syncProfileFromLocal: (userId: string, email: string) => void;
   updateProfile: (
     userId: string,
     email: string,
@@ -31,6 +32,13 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
         error: (error as Error).message ?? "Failed to load profile."
       });
     }
+  },
+  syncProfileFromLocal(userId, email) {
+    set({
+      profile: getLocalProfileSnapshot(userId, email),
+      loading: false,
+      error: null
+    });
   },
   async updateProfile(userId, email, patch) {
     set({ loading: true, error: null });
