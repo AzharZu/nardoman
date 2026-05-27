@@ -103,7 +103,7 @@ export function GamePageClient() {
   const botPersonality = useGameStore((state) => state.game.botPersonality);
   const [fullscreen, setFullscreen] = useState(false);
   const user = useAuthStore((state) => state.user);
-  const { profile, loadProfile, updateProfile } = useProfileStore();
+  const { profile, loadProfile, updateProfile, syncProfileFromLocal } = useProfileStore();
   const [activeRoomKey, setActiveRoomKey] = useState("grass-picnic");
 
   useEffect(() => {
@@ -112,7 +112,7 @@ export function GamePageClient() {
 
   useEffect(() => {
     if (user) {
-      void loadProfile(user.id, user.email, true);
+      void loadProfile(user.id, user.email);
     }
   }, [loadProfile, user]);
 
@@ -127,13 +127,13 @@ export function GamePageClient() {
     const subscriptionKey = `backgammon-rush-subscription-${user.id}`;
     const handleStorage = (event: StorageEvent) => {
       if (event.key === profileKey || event.key === subscriptionKey) {
-        void loadProfile(user.id, user.email, true);
+        syncProfileFromLocal(user.id, user.email);
       }
     };
 
     window.addEventListener("storage", handleStorage);
     return () => window.removeEventListener("storage", handleStorage);
-  }, [loadProfile, user]);
+  }, [syncProfileFromLocal, user]);
 
   const subscription = useMemo(() => getEffectiveSubscriptionSnapshot(profile, user), [profile, user]);
   useEffect(() => {

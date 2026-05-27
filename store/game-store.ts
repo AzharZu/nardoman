@@ -46,7 +46,15 @@ export interface StoreSnapshot {
 }
 
 interface GameStore extends StoreSnapshot {
-  startNewMatch: (mode?: MatchMode, personality?: BotPersonality, roomId?: string | null, playerColor?: PlayerColor) => void;
+  opponentId: string | null;
+  opponentName: string | null;
+  startNewMatch: (
+    mode?: MatchMode,
+    personality?: BotPersonality,
+    roomId?: string | null,
+    playerColor?: PlayerColor,
+    opponent?: { id?: string | null; name?: string | null }
+  ) => void;
   setBotPersonality: (personality: BotPersonality) => void;
   setPlayerColor: (color: PlayerColor) => void;
   setActiveAnalysisById: (id: string | null) => void;
@@ -96,6 +104,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
   matchId: createMatchId(),
   playerColor: "white",
   roomId: null,
+  opponentId: null,
+  opponentName: null,
   botThinking: false,
   moveHistory: [],
   activeAnalysis: null,
@@ -103,7 +113,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   endedEarly: false,
   forfeitBy: null,
   ratingDelta: 0,
-  startNewMatch: (mode = "quick", personality = "Tactical", roomId = null, playerColor = "white") => {
+  startNewMatch: (mode = "quick", personality = "Tactical", roomId = null, playerColor = "white", opponent = {}) => {
     const nextMatchId = mode === "friend" && roomId ? roomId : createMatchId();
     set(() => ({
       game: createInitialGameState(personality, playerColor, roomId),
@@ -111,6 +121,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
       matchId: nextMatchId,
       playerColor,
       roomId,
+      opponentId: opponent.id ?? null,
+      opponentName: opponent.name ?? null,
       botThinking: false,
       moveHistory: [],
       activeAnalysis: null,
@@ -290,17 +302,6 @@ export const useGameStore = create<GameStore>((set, get) => ({
       activeAnalysis: null
     });
 
-    if (!isBotMatch && currentUser) {
-      const profileStore = useProfileStore.getState();
-      const currentProfile = profileStore.profile;
-      const nextRating = Math.max(0, (currentProfile?.rating ?? 1200) + ratingDelta);
-      const nextLosses = (currentProfile?.losses ?? 0) + 1;
-      void profileStore.updateProfile(currentUser.id, currentUser.email, {
-        rating: nextRating,
-        losses: nextLosses
-      });
-    }
-
     get().saveMatch();
   },
   runBotTurn: () => {
@@ -431,11 +432,33 @@ export const useGameStore = create<GameStore>((set, get) => ({
     beginPlayback(game);
   },
   saveMatch: () => {
-    const { game, matchMode, matchId, moveHistory, matchSaved, playerColor, roomId, endedEarly, forfeitBy, ratingDelta } = get();
+    const {
+      game,
+      matchMode,
+      matchId,
+      moveHistory,
+      matchSaved,
+      playerColor,
+      roomId,
+      opponentId,
+      opponentName,
+      endedEarly,
+      forfeitBy,
+      ratingDelta
+    } = get();
     if (matchSaved || game.status !== "finished" || !game.winner) return;
 
-    const profile = useProfileStore.getState().profile;
+    const profileStore = useProfileStore.getState();
+    const currentUser = useAuthStore.getState().user;
+    const profile = profileStore.profile;
     const vibeRoom = profile?.favorite_vibe_room ?? "Grass Picnic";
+    const resolvedOpponentName =
+      opponentName ??
+      (matchMode === "bot"
+        ? `${game.botPersonality} Bot`
+        : matchMode === "friend"
+          ? "Friend"
+          : "Local Opponent");
     const matchAnalysis = buildEndgameAnalysis(
       [...moveHistory].reverse().map((historyItem) => ({
         move: historyItem.move,
@@ -459,6 +482,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
       endedEarly,
       forfeitBy,
       ratingDelta,
+      opponentId,
+      opponentName: resolvedOpponentName,
       aiCoachSummary: endedEarly
         ? matchMode === "bot"
           ? "You ended the match early against the bot. No rating change."
@@ -476,6 +501,18 @@ export const useGameStore = create<GameStore>((set, get) => ({
         createdAt: historyItem.createdAt
       }))
     );
+
+    if (currentUser) {
+      const isWinner = game.winner === playerColor;
+      const nextWins = (profile?.wins ?? 0) + (isWinner ? 1 : 0);
+      const nextLosses = (profile?.losses ?? 0) + (isWinner ? 0 : 1);
+      const nextRating = Math.max(0, (profile?.rating ?? 1200) + (ratingDelta ?? 0));
+      void profileStore.updateProfile(currentUser.id, currentUser.email, {
+        wins: nextWins,
+        losses: nextLosses,
+        rating: nextRating
+      });
+    }
     set({ matchSaved: true });
   },
   applySnapshot: (snapshot) => {

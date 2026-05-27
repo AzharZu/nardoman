@@ -87,6 +87,7 @@ create table if not exists public.rooms (
   player_white_id uuid references public.profiles(id) on delete set null,
   player_black_id uuid references public.profiles(id) on delete set null,
   status text not null default 'waiting' check (status in ('waiting', 'active', 'finished')),
+  snapshot jsonb,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );

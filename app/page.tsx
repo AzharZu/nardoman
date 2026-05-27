@@ -52,6 +52,8 @@ export default function LandingPage() {
     void router.prefetch("/game/setup");
     void router.prefetch("/leaderboard");
     void router.prefetch("/dashboard");
+    void router.prefetch("/auth/login");
+    void router.prefetch("/auth/signup");
   }, [router]);
 
   return (
@@ -82,24 +84,24 @@ export default function LandingPage() {
         </Container>
       </header>
 
-      <section className="relative overflow-hidden border-b border-[#dfe3d6] bg-[radial-gradient(circle_at_top_left,rgba(122,176,99,0.18),transparent_36%),radial-gradient(circle_at_top_right,rgba(125,183,236,0.13),transparent_30%),linear-gradient(180deg,#f8f5ea_0%,#eef4e8_42%,#e4f1e1_100%)] py-16 lg:py-24">
+      <section className="relative overflow-hidden border-b border-[#dfe3d6] bg-[radial-gradient(circle_at_top_left,rgba(122,176,99,0.18),transparent_36%),radial-gradient(circle_at_top_right,rgba(125,183,236,0.13),transparent_30%),linear-gradient(180deg,#f8f5ea_0%,#eef4e8_42%,#e4f1e1_100%)] py-14 lg:py-20">
         <div className="pointer-events-none absolute inset-x-0 top-0 h-44 bg-gradient-to-b from-white/60 to-transparent" />
         <div className="pointer-events-none absolute left-[-4rem] top-24 h-64 w-64 rounded-full bg-[#99c67b]/18 blur-3xl" />
         <div className="pointer-events-none absolute right-[-3rem] top-48 h-72 w-72 rounded-full bg-[#7fb6ea]/14 blur-3xl" />
 
-        <Container className="relative grid items-center gap-12 lg:grid-cols-[0.98fr_1.02fr]">
+        <Container className="relative grid items-center gap-14 lg:grid-cols-[0.94fr_1.06fr]">
           <motion.div
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease: "easeOut" }}
-            className="max-w-2xl space-y-8"
+            className="max-w-[700px] space-y-7"
           >
-            <h1 className="text-5xl font-semibold leading-[1.02] tracking-tight text-[#1f2639] md:text-7xl">
+            <h1 className="text-4xl font-semibold leading-[1.03] tracking-tight text-[#1f2639] md:text-6xl lg:text-7xl">
               Backgammon,
               <br />
               <span className="text-[#67a454]">in a softer light.</span>
             </h1>
-            <p className="max-w-[760px] text-2xl leading-[1.25] text-[#5f6775] md:text-4xl lg:text-[42px]">
+            <p className="max-w-[700px] text-xl leading-[1.3] text-[#5f6775] md:text-3xl lg:text-[36px]">
               A calm, anime-inspired place for smooth matches, gentle coaching, and cozy strategy.
             </p>
 
@@ -107,7 +109,7 @@ export default function LandingPage() {
               <Link
                 href="/game/setup"
                 prefetch
-                className="inline-flex items-center gap-3 rounded-2xl bg-[#6fae57] px-7 py-4 text-lg font-semibold text-white shadow-[0_18px_40px_rgba(111,174,87,0.28)] transition duration-300 hover:-translate-y-0.5 hover:bg-[#62a04e] hover:shadow-[0_22px_52px_rgba(111,174,87,0.32)]"
+                className="inline-flex items-center gap-3 rounded-2xl bg-[#6fae57] px-6 py-3.5 text-base font-semibold text-white shadow-[0_18px_40px_rgba(111,174,87,0.28)] transition duration-300 hover:-translate-y-0.5 hover:bg-[#62a04e] hover:shadow-[0_22px_52px_rgba(111,174,87,0.32)] md:text-lg"
               >
                 <Gamepad2 className="h-5 w-5" />
                 Play Now
@@ -115,7 +117,7 @@ export default function LandingPage() {
               <Link
                 href="/game/setup?mode=friend"
                 prefetch
-                className="inline-flex items-center gap-3 rounded-2xl border border-[#97b78a] bg-[#f3f7ef] px-7 py-4 text-lg font-semibold text-[#60804f] shadow-[0_14px_32px_rgba(79,110,67,0.08)] transition duration-300 hover:-translate-y-0.5 hover:border-[#7fa46e] hover:bg-[#ebf2e4] hover:shadow-[0_18px_38px_rgba(79,110,67,0.12)]"
+                className="inline-flex items-center gap-3 rounded-2xl border border-[#97b78a] bg-[#f3f7ef] px-6 py-3.5 text-base font-semibold text-[#60804f] shadow-[0_14px_32px_rgba(79,110,67,0.08)] transition duration-300 hover:-translate-y-0.5 hover:border-[#7fa46e] hover:bg-[#ebf2e4] hover:shadow-[0_18px_38px_rgba(79,110,67,0.12)] md:text-lg"
               >
                 <Users className="h-5 w-5" />
                 Create Friend Room
@@ -124,7 +126,7 @@ export default function LandingPage() {
 
             <Link
               href="/#vibe-rooms"
-              className="inline-flex text-lg font-medium text-[#59704d] underline decoration-[#a8c293] decoration-2 underline-offset-4 transition hover:text-[#4e6341]"
+              className="inline-flex text-base font-medium text-[#59704d] underline decoration-[#a8c293] decoration-2 underline-offset-4 transition hover:text-[#4e6341] md:text-lg"
             >
               Explore Vibe Rooms
             </Link>
@@ -183,13 +185,13 @@ export default function LandingPage() {
 
 function HeroScene() {
   return (
-    <div className="relative mx-auto w-full max-w-[860px] px-2 pb-10 pt-3 sm:px-4 lg:max-w-none lg:px-0">
+    <div className="relative mx-auto w-full max-w-[760px] px-2 pb-8 pt-2 sm:px-4 lg:max-w-none lg:px-0">
       <div className="pointer-events-none absolute inset-x-[14%] top-0 h-28 rounded-full bg-[#fff2cf]/20 blur-3xl" />
       <div className="pointer-events-none absolute inset-x-[8%] bottom-[-2%] h-40 rounded-full bg-[#183215]/30 blur-3xl" />
 
       <div className="relative overflow-visible">
         <div className="pointer-events-none absolute inset-x-[14%] bottom-[12%] z-0 h-28 rounded-full bg-black/28 blur-3xl" />
-        <div className="relative isolate min-h-[580px] overflow-hidden rounded-[32px] bg-[linear-gradient(180deg,#304255_0%,#2a3c46_18%,#243930_36%,#1f2e1f_58%,#11170d_100%)] shadow-[0_38px_110px_rgba(33,45,24,0.26)] md:min-h-[760px]">
+        <div className="relative isolate min-h-[520px] overflow-hidden rounded-[32px] bg-[linear-gradient(180deg,#304255_0%,#2a3c46_18%,#243930_36%,#1f2e1f_58%,#11170d_100%)] shadow-[0_38px_110px_rgba(33,45,24,0.26)] md:min-h-[680px]">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_52%_24%,rgba(255,208,132,0.28)_0%,rgba(255,208,132,0.16)_14%,transparent_34%),radial-gradient(circle_at_18%_16%,rgba(255,255,255,0.12)_0%,transparent_15%),radial-gradient(circle_at_74%_20%,rgba(255,255,255,0.1)_0%,transparent_16%)]" />
           <div className="absolute inset-x-0 top-[18%] h-52 bg-[radial-gradient(circle_at_center,rgba(255,217,143,0.18),transparent_72%)]" />
           <div className="absolute inset-x-[-4%] bottom-0 h-[58%] bg-[linear-gradient(180deg,rgba(56,90,41,0.2)_0%,rgba(27,43,22,0.7)_30%,rgba(14,21,11,0.98)_100%)]" />
@@ -199,12 +201,12 @@ function HeroScene() {
           <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-white/10 to-transparent" />
           <div className="absolute inset-x-0 bottom-0 h-52 bg-[linear-gradient(180deg,transparent_0%,rgba(13,19,9,0.32)_26%,rgba(13,19,9,0.92)_100%)]" />
 
-          <div className="absolute left-1/2 top-[29%] z-10 w-[98%] -translate-x-1/2 md:w-[94%]">
+          <div className="absolute left-1/2 top-[27%] z-10 w-[96%] -translate-x-1/2 md:w-[92%]">
             <div className="absolute inset-x-[10%] top-[60%] h-32 rounded-full bg-black/42 blur-[76px]" />
             <div
               className="relative"
               style={{
-                transform: "perspective(1600px) rotateX(16deg) rotateZ(-4deg) skewX(-4deg)",
+                transform: "perspective(1600px) rotateX(14deg) rotateZ(-4deg) skewX(-4deg)",
                 transformOrigin: "center center"
               }}
             >
@@ -213,7 +215,7 @@ function HeroScene() {
           </div>
         </div>
 
-        <div className="pointer-events-none absolute bottom-[-7%] right-[-2%] z-20 w-[64%] max-w-[580px] md:w-[58%] lg:w-[52%]">
+        <div className="pointer-events-none absolute bottom-[-5%] right-[-1%] z-20 w-[58%] max-w-[520px] md:w-[54%] lg:w-[48%]">
           <div className="absolute inset-x-[14%] bottom-[8%] h-28 rounded-full bg-black/52 blur-3xl" />
           <div className="absolute inset-y-[14%] left-[12%] w-28 rounded-full bg-black/32 blur-2xl" />
           <Image
@@ -222,7 +224,7 @@ function HeroScene() {
             width={612}
             height={408}
             priority
-            className="relative z-10 h-auto w-full translate-x-[-2%] scale-[1.08] object-contain drop-shadow-[0_42px_36px_rgba(25,18,10,0.44)]"
+            className="relative z-10 h-auto w-full translate-x-[-2%] scale-[1.02] object-contain drop-shadow-[0_42px_36px_rgba(25,18,10,0.44)]"
           />
         </div>
       </div>

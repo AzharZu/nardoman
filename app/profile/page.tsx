@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Badge, Button, Container, Panel } from "@/components/ui";
 import { useAuthStore } from "@/store/auth-store";
 import { useProfileStore } from "@/store/profile-store";
+import { getMatchOpponentLabel, loadMatchHistory, type MatchHistoryEntry } from "@/lib/data/match-history";
 import { hasSupabaseConfig, getSupabaseSetupMessage } from "@/lib/supabase/config";
 import { getVibeRoomConfig } from "@/lib/vibe-rooms";
 
@@ -25,16 +26,17 @@ const playstyleOptions = [
 export default function ProfilePage() {
   const user = useAuthStore((state) => state.user);
   const hydrated = useAuthStore((state) => state.hydrated);
-  const { profile, loading, error, loadProfile, updateProfile } = useProfileStore();
+  const { profile, loading, error, loadProfile, updateProfile, syncProfileFromLocal } = useProfileStore();
   const [username, setUsername] = useState("");
   const [city, setCity] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
   const [playstyle, setPlaystyle] = useState("Tactical");
   const [favoriteVibe, setFavoriteVibe] = useState<string>("");
+  const [history, setHistory] = useState<MatchHistoryEntry[]>([]);
 
   useEffect(() => {
     if (user) {
-      void loadProfile(user.id, user.email, true);
+      void loadProfile(user.id, user.email);
     }
   }, [loadProfile, user]);
 
@@ -47,6 +49,47 @@ export default function ProfilePage() {
       setFavoriteVibe(profile.favorite_vibe_room ?? "");
     }
   }, [profile]);
+
+  useEffect(() => {
+    if (!user) {
+      setHistory([]);
+      return;
+    }
+
+    const syncHistory = () => {
+      setHistory(loadMatchHistory());
+    };
+
+    syncHistory();
+
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === "backgammon-rush-match-history") {
+        syncHistory();
+      }
+    };
+
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
+  }, [user]);
+
+  useEffect(() => {
+    if (!user) return;
+
+    const profileKey = `backgammon-rush-profile-${user.id}`;
+    const subscriptionKey = `backgammon-rush-subscription-${user.id}`;
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === profileKey || event.key === subscriptionKey) {
+        syncProfileFromLocal(user.id, user.email);
+      }
+    };
+
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
+  }, [syncProfileFromLocal, user]);
+
+  const ownedHistory = history.filter((entry) => entry.userId === user?.id);
+  const visibleHistory = ownedHistory.length > 0 ? ownedHistory : history;
+  const friendMatches = visibleHistory.filter((entry) => entry.opponentType === "friend").slice(0, 5);
 
   if (!hydrated) {
     return (
@@ -215,22 +258,55 @@ export default function ProfilePage() {
             {error ? <p className="text-sm text-[#c46e4f]">{error}</p> : null}
           </Panel>
 
-          <Panel className="space-y-4 border-[#d9ccb8] bg-[#fffaf3] p-6 shadow-[0_18px_55px_rgba(80,67,35,0.08)]">
-            <div>
-              <p className="text-[0.7rem] uppercase tracking-[0.28em] text-[#6ca86b]">Stats</p>
-              <h2 className="text-2xl font-semibold text-[#1f2639]">Player summary</h2>
-            </div>
-            <div className="grid gap-3">
-              <Stat label="Level" value={profile?.level ?? 1} />
-              <Stat label="Rating" value={profile?.rating ?? 1200} />
-              <Stat label="Wins" value={profile?.wins ?? 0} />
-              <Stat label="Losses" value={profile?.losses ?? 0} />
-              <Stat label="Favorite room" value={toVibeLabel(profile?.favorite_vibe_room ?? "grass-picnic")} />
-            </div>
-            <div className="rounded-2xl border border-[#d8ccb8] bg-[#f6f1e5] px-4 py-3 text-sm text-[#6f7480]">
-              Joined on {new Date(profile?.created_at ?? user.createdAt).toLocaleDateString()}
-            </div>
-          </Panel>
+          <div className="space-y-5">
+            <Panel className="space-y-4 border-[#d9ccb8] bg-[#fffaf3] p-6 shadow-[0_18px_55px_rgba(80,67,35,0.08)]">
+              <div>
+                <p className="text-[0.7rem] uppercase tracking-[0.28em] text-[#6ca86b]">Stats</p>
+                <h2 className="text-2xl font-semibold text-[#1f2639]">Player summary</h2>
+              </div>
+              <div className="grid gap-3">
+                <Stat label="Level" value={profile?.level ?? 1} />
+                <Stat label="Rating" value={profile?.rating ?? 1200} />
+                <Stat label="Wins" value={profile?.wins ?? 0} />
+                <Stat label="Losses" value={profile?.losses ?? 0} />
+                <Stat label="Favorite room" value={toVibeLabel(profile?.favorite_vibe_room ?? "grass-picnic")} />
+              </div>
+              <div className="rounded-2xl border border-[#d8ccb8] bg-[#f6f1e5] px-4 py-3 text-sm text-[#6f7480]">
+                Joined on {new Date(profile?.created_at ?? user.createdAt).toLocaleDateString()}
+              </div>
+            </Panel>
+
+            <Panel className="space-y-4 border-[#d9ccb8] bg-[#fffaf3] p-6 shadow-[0_18px_55px_rgba(80,67,35,0.08)]">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-[0.7rem] uppercase tracking-[0.28em] text-[#6ca86b]">Friend matches</p>
+                  <h2 className="text-2xl font-semibold text-[#1f2639]">Recent opponents</h2>
+                </div>
+                <Badge className="border-[#d8ccb8] bg-[#f6f1e5] text-[#6e6a5d]">{friendMatches.length} saved</Badge>
+              </div>
+              <div className="space-y-3">
+                {friendMatches.length === 0 ? (
+                  <div className="rounded-3xl border border-dashed border-[#d8ccb8] bg-[#fffaf3] px-4 py-8 text-center text-[#6f7480]">
+                    Play a friend match to see who you faced here.
+                  </div>
+                ) : (
+                  friendMatches.map((entry) => (
+                    <div key={entry.id} className="flex items-center justify-between rounded-3xl bg-[#f2ede0] px-4 py-4">
+                      <div>
+                        <p className="text-lg font-semibold text-[#202738]">{getMatchOpponentLabel(entry)}</p>
+                        <p className="text-sm text-[#6f7480]">
+                          {entry.result === "win" ? "Win" : "Loss"} · {entry.score} · {new Date(entry.date).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+                        </p>
+                      </div>
+                      <Badge className={entry.result === "win" ? "border-[#d7dfd1] bg-[#edf5e1] text-[#5d8f49]" : "border-[#f3dfd4] bg-[#fff1eb] text-[#c46e4f]"}>
+                        {entry.result === "win" ? "W" : "L"}
+                      </Badge>
+                    </div>
+                  ))
+                )}
+              </div>
+            </Panel>
+          </div>
         </div>
       </Container>
     </div>
