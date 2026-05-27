@@ -40,6 +40,7 @@ If the public Supabase keys are missing, auth and live sync are disabled.
 3. For the quickest setup, run `supabase/schema.sql` in the SQL editor.
 4. If you prefer migration-based setup, use the files in `supabase/migrations/`.
 5. Make sure Email auth is enabled.
+6. In Auth settings, set the Site URL to your production domain and add redirect URL patterns for localhost and Vercel preview deployments.
 
 The schema includes:
 
@@ -70,10 +71,26 @@ npm run build
 
 ## Deploy to Vercel
 
-1. Push the repo to GitHub.
-2. Import the repo in Vercel.
-3. Add the Supabase environment variables in the Vercel project settings.
-4. Deploy.
+1. Import the GitHub repo into Vercel.
+2. Keep `main` as the Production Branch.
+3. Add these Environment Variables in Vercel for Production and Preview:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+   - `SUPABASE_SERVICE_ROLE_KEY`
+   - Optional fallback: `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+4. If you want local development through Vercel CLI, add the same values to Development or run `vercel env pull`.
+5. In Supabase Auth URL Configuration, allow:
+   - your production domain
+   - `http://localhost:3000/**`
+   - your Vercel preview domain pattern
+6. Deploy from `main`.
+
+Suggested Supabase URL setup:
+
+- Site URL: `https://your-production-domain.com`
+- Additional redirect URLs:
+  - `http://localhost:3000/**`
+  - `https://*-<team-or-account-slug>.vercel.app/**`
 
 ## Notes
 
