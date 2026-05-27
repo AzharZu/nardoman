@@ -1,273 +1,101 @@
 # Backgammon Rush
 
-**Backgammon Rush** — это современная веб-платформа для игры в нарды, где классическая настольная игра превращается в атмосферный digital experience.
+Warm, cozy backgammon with AI coaching, bot opponents, profile persistence, and shareable friend rooms.
 
-Это не просто онлайн-доска с фишками.  
-Это уютное пространство для игры, обучения и красивых партий с ботом или другом.
+## What’s Included
 
----
+- Play vs Bot with Chill, Tactical, and Aggressive personalities
+- Friend room links with localStorage/BroadcastChannel preview sync
+- Supabase-backed auth, profile storage, and match persistence
+- Pro access starts as a 2-hour trial and persists in Supabase
+- AI Coach move explanations with quality, risk, and aggression scores
+- Cozy picnic-style game board and fullscreen mode
 
-## Идея проекта
+## Setup
 
-Большинство сайтов для игры в нарды выглядят устаревшими: сухая доска, минимум эмоций, сложные правила без объяснений и ощущение “обычной браузерной игры”.
-
-**Backgammon Rush** решает это по-другому.
-
-Мы сделали нарды более:
-
-- визуальными
-- понятными
-- атмосферными
-- дружелюбными для новичков
-- интересными для повторной игры
-
-Главная идея проекта:
-
-> Нарды должны быть не просто игрой, а местом, куда хочется вернуться.
-
----
-
-## Чем проект отличается от обычных онлайн-нард
-
-В Backgammon Rush есть не только игровая логика, но и продуктовая концепция.
-
-### 1. Атмосфера вместо обычной доски
-
-Игрок выбирает не просто режим игры, а настроение партии.
-
-В проекте есть **Vibe Rooms** — визуальные комнаты для игры:
-
-- **Grass Picnic** — спокойная дневная атмосфера на траве
-- **Sunset Rooftop** — тёплая вечерняя партия
-- **Zen Garden** — спокойный фокус и минимализм
-- **Neon City** — контрастный ночной режим
-
-Каждая комната меняет ощущение от игры и делает партию визуально запоминающейся.
-
----
-
-### 2. Fullscreen Chill Mode
-
-Игрок может открыть игру в полноэкранном режиме.
-
-В этом режиме остаётся только самое важное:
-
-- доска
-- чей ход
-- кубики
-- подсказки
-- AI Coach
-
-Цель — убрать лишний интерфейс и оставить ощущение спокойной партии на природе.
-
----
-
-### 3. AI Coach
-
-Встроенный AI Coach помогает игроку понимать свои ходы.
-
-Он объясняет:
-
-- был ли ход безопасным
-- где игрок оставил открытую фишку
-- когда ход был рискованным
-- когда позиция стала сильнее
-- как можно было сыграть лучше
-
-После партии игрок получает краткий анализ:
-
-- оценка игры из 10
-- сильные ходы
-- рискованные решения
-- общий стиль игры
-- совет на следующую партию
-
-Это делает нарды понятнее для новичков и полезнее для тех, кто хочет играть лучше.
-
----
-
-### 4. Игра против бота
-
-Игрок может сыграть против бота.
-
-Доступны разные стили соперника:
-
-- **Chill** — спокойная и безопасная игра
-- **Tactical** — сбалансированная стратегия
-- **Aggressive** — быстрые и рискованные решения
-
-Ходы бота отображаются визуально, чтобы игрок понимал, что именно произошло на доске.
-
----
-
-### 5. Игра с другом по ссылке
-
-В проекте есть режим **Friend Room**.
-
-Игрок может:
-
-- создать комнату
-- выбрать сторону: белые, чёрные или случайно
-- получить ссылку
-- отправить её другу
-- открыть совместную игру
-
-Сейчас реализован preview-ready multiplayer через `localStorage` / `BroadcastChannel`, а структура проекта подготовлена для будущего перехода на Supabase Realtime или WebSockets.
-
----
-
-### 6. Профиль, статистика и прогресс
-
-После регистрации пользователь получает профиль.
-
-В профиле можно хранить:
-
-- имя игрока
-- город
-- статистику
-- историю партий
-- любимую атмосферу
-- прогресс
-- Pro trial status
-
-Это добавляет возвращаемость и делает проект похожим на настоящий сервис, а не разовую игру.
-
----
-
-### 7. Лидерборд по городам
-
-В проекте есть социальный слой — рейтинг игроков.
-
-Пример городов:
-
-- Алматы
-- Астана
-- Бишкек
-- Ташкент
-
-Идея — сделать нарды не только личной игрой, но и локальным комьюнити.
-
----
-
-### 8. Pro Upgrade
-
-В проект добавлена монетизационная модель.
-
-Pro открывает:
-
-- премиум Vibe Rooms
-- кастомные скины доски
-- расширенный AI Coach
-- семейные турниры
-- сезонные темы
-
-В прототипе Pro работает как trial-режим, без реальной оплаты.
-
----
-
-## Главная фишка проекта
-
-**Backgammon Rush** выделяется не одной функцией, а сочетанием:
-
-> атмосфера + обучение + социальная игра + fullscreen experience
-
-Это нарды, которые ощущаются современно.
-
-Не “зашёл, походил, вышел”, а:
-
-> выбрал настроение, сыграл партию, получил объяснение ходов и захотел сыграть ещё.
-
----
-
-## Для кого этот продукт
-
-Проект рассчитан на:
-
-- новичков, которым сложно понимать стратегию нард
-- игроков, которые хотят быстрые партии
-- людей, которым важен красивый и спокойный интерфейс
-- друзей, которые хотят сыграть по ссылке
-- пользователей, которым нравится атмосфера настольных игр
-
----
-
-## Технический стек
-
-- Next.js App Router
-- TypeScript
-- Tailwind CSS
-- Framer Motion
-- Zustand
-- Supabase
-- LocalStorage / BroadcastChannel
-- Vercel
-
----
-
-## Что реализовано
-
-- игровая доска для нард
-- бросок кубиков
-- проверка доступных ходов
-- подсветка легальных ходов
-- смена очереди хода
-- игра против бота
-- разные стили бота
-- AI Coach
-- анализ ходов
-- итоговый анализ партии
-- Friend Room по ссылке
-- авторизация
-- профиль пользователя
-- статистика
-- лидерборд
-- Pro trial
-- fullscreen режим
-- Vibe Rooms
-- адаптивный интерфейс
-
----
-
-## Архитектура
-
-Проект разделён на несколько ключевых частей:
-
-- game engine logic
-- bot decision logic
-- AI Coach analysis logic
-- auth API routes
-- profile API routes
-- subscription API routes
-- Supabase data layer
-- UI components
-- Vibe Room system
-
-Запись профиля и Pro-состояния идёт через backend API routes, а не напрямую из frontend.
-
----
-
-## Почему это ценно
-
-Проект показывает не только умение сделать веб-приложение, но и продуктовый подход.
-
-В нём есть:
-
-- понятная аудитория
-- уникальная визуальная идея
-- игровая механика
-- удержание пользователя
-- социальная функция
-- AI-функционал
-- монетизация
-- потенциал развития
-
-Backgammon Rush — это не копия существующих сайтов для нард, а прототип сервиса с собственной идентичностью.
-
----
-
-## Как запустить проект локально
-
-### 1. Установить зависимости
+### Install
 
 ```bash
 npm install
+```
+
+### Environment Variables
+
+Create `.env.local` from `.env.example` and add:
+
+```bash
+NEXT_PUBLIC_SUPABASE_URL=your-project-url
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your-publishable-key
+# Optional fallback for older setups
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+```
+
+If the public Supabase keys are missing, auth and live sync are disabled.
+
+## Supabase
+
+1. Create a new Supabase project.
+2. Open the SQL editor.
+3. For the quickest setup, run `supabase/schema.sql` in the SQL editor.
+4. If you prefer migration-based setup, use the files in `supabase/migrations/`.
+5. Make sure Email auth is enabled.
+6. In Auth settings, set the Site URL to your production domain and add redirect URL patterns for localhost and Vercel preview deployments.
+
+The schema includes:
+
+- `profiles`
+- `matches`
+- `moves`
+- `leaderboard_entries`
+- `statistics`
+- `achievements`
+- `rooms`
+- `purchases`
+
+`supabase/schema.sql` is the canonical quick-start file. The `supabase/migrations/` folder mirrors the same schema for migration-first workflows and GitHub demos.
+
+## Local Development
+
+```bash
+npm run dev
+```
+
+Open `http://localhost:3000`.
+
+## Production Build
+
+```bash
+npm run build
+```
+
+## Deploy to Vercel
+
+1. Import the GitHub repo into Vercel.
+2. Keep `main` as the Production Branch.
+3. Add these Environment Variables in Vercel for Production and Preview:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+   - `SUPABASE_SERVICE_ROLE_KEY`
+   - Optional fallback: `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+4. If you want local development through Vercel CLI, add the same values to Development or run `vercel env pull`.
+5. In Supabase Auth URL Configuration, allow:
+   - your production domain
+   - `http://localhost:3000/**`
+   - your Vercel preview domain pattern
+6. Deploy from `main`.
+
+Suggested Supabase URL setup:
+
+- Site URL: `https://your-production-domain.com`
+- Additional redirect URLs:
+  - `http://localhost:3000/**`
+  - `https://*-<team-or-account-slug>.vercel.app/**`
+
+## Notes
+
+- Login and signup go through backend auth routes and redirect into the dashboard.
+- Dashboard and profile pages use real profile data when logged in.
+- Pro page activates a 2-hour trial instead of collecting payment yet.
+- Guests can still browse public sample data where it makes sense.
+- Friend rooms are preview-ready now and can be replaced with realtime later without changing the route shape.
